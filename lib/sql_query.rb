@@ -8,8 +8,8 @@ class SqlQuery
       fail ArgumentError, 'SQL file name should be String or Symbol'
     end
     @sql_filename = file_name
-    @options = options
-    @connection =  options.try(:delete, :db_connection) || self.class.config.adapter.connection
+    @options = options || {}
+    @connection =  options.delete(:db_connection) || self.class.config.adapter.connection
     prepare_variables
   end
 
@@ -86,7 +86,7 @@ class SqlQuery
   end
 
   def prepare_variables
-    return unless @options.present?
+    return if @options.empty?
     @options.each do |k, v|
       instance_variable_set("@#{k}", v)
     end
